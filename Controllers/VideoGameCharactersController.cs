@@ -23,4 +23,11 @@ public class VideoGameCharactersController(IVideoGameGameCharacterService servic
         // }
         // return Ok(character);
     }
+
+    [HttpPost]
+    public async Task<ActionResult<CharacterResponse>> AddCharacter(CreateCharacterRequest character)
+    {
+        var createdCharacter = await service.AddCharacterAsync(character);
+        return CreatedAtAction(nameof(GetCharacter), new { id = createdCharacter.Id, createdCharacter});
+    }
 }

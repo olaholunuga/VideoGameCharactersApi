@@ -37,10 +37,10 @@ public class VideoGameCharacterService(AppDbContext context) : IVideoGameGameCha
         }).FirstOrDefaultAsync();
     }
     
-    public async Task<CharacterResponse> AddCharacterAsync(Character character)
+    public async Task<CharacterResponse> AddCharacterAsync(CreateCharacterRequest character)
         => throw new NotImplementedException();
     
-    public async Task<CharacterResponse> UpdateCharacterAsync(int id, Character character)
+    public async Task<CharacterResponse> UpdateCharacterAsync(int id, UpdateCharacterRequest character)
         => throw new NotImplementedException();
     
     public async Task<bool> DeleteCharacterAsync(int id)
