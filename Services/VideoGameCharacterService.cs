@@ -1,8 +1,10 @@
+using NewApi.Data;
 using NewApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace NewApi.Services;
 
-public class VideoGameCharacterService : IVideoGameGameCharacterService
+public class VideoGameCharacterService(AppDbContext context) : IVideoGameGameCharacterService
 {
     static List<Character> characters = new List<Character>
     {
@@ -14,12 +16,12 @@ public class VideoGameCharacterService : IVideoGameGameCharacterService
     };
 
     public async Task<List<Character>> GetAllCharactersAsync()
-        => await Task.FromResult(characters);
+        => await context.Characters.ToListAsync();
     
     public async Task<Character?> GetCharacterByIdAsync(int id)
     {
-        var character = characters.FirstOrDefault(c => c.Id == id);
-        return await Task.FromResult(character);
+        // var character = characters.FirstOrDefault(c => c.Id == id);
+        return await context.Characters.FindAsync(id);
     }
     
     public async Task<Character> AddCharacterAsync(Character character)
