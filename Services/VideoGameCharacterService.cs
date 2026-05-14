@@ -1,6 +1,7 @@
 using NewApi.Data;
 using NewApi.Models;
 using Microsoft.EntityFrameworkCore;
+using NewApi.Dtos;
 
 namespace NewApi.Services;
 
@@ -15,19 +16,31 @@ public class VideoGameCharacterService(AppDbContext context) : IVideoGameGameCha
     
     };
 
-    public async Task<List<Character>> GetAllCharactersAsync()
-        => await context.Characters.ToListAsync();
+    public async Task<List<CharacterResponse>> GetAllCharactersAsync()
+        => await context.Characters.Select(c => new CharacterResponse
+        {
+            Name = c.Name,
+            Game = c.Game,
+            Role = c.Role
+        }).ToListAsync();
     
-    public async Task<Character?> GetCharacterByIdAsync(int id)
+    public async Task<CharacterResponse?> GetCharacterByIdAsync(int id)
     {
         // var character = characters.FirstOrDefault(c => c.Id == id);
-        return await context.Characters.FindAsync(id);
+        return await context.Characters
+        .Where(c => c.Id == id)
+        .Select(c => new CharacterResponse
+        {
+            Name = c.Name,
+            Game = c.Game,
+            Role = c.Role
+        }).FirstOrDefaultAsync();
     }
     
-    public async Task<Character> AddCharacterAsync(Character character)
+    public async Task<CharacterResponse> AddCharacterAsync(Character character)
         => throw new NotImplementedException();
     
-    public async Task<Character> UpdateCharacterAsync(int id, Character character)
+    public async Task<CharacterResponse> UpdateCharacterAsync(int id, Character character)
         => throw new NotImplementedException();
     
     public async Task<bool> DeleteCharacterAsync(int id)
