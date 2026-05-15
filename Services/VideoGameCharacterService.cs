@@ -19,6 +19,7 @@ public class VideoGameCharacterService(AppDbContext context) : IVideoGameGameCha
     public async Task<List<CharacterResponse>> GetAllCharactersAsync()
         => await context.Characters.Select(c => new CharacterResponse
         {
+            Id = c.Id,
             Name = c.Name,
             Game = c.Game,
             Role = c.Role
@@ -31,6 +32,7 @@ public class VideoGameCharacterService(AppDbContext context) : IVideoGameGameCha
         .Where(c => c.Id == id)
         .Select(c => new CharacterResponse
         {
+            Id = c.Id,
             Name = c.Name,
             Game = c.Game,
             Role = c.Role
@@ -38,9 +40,26 @@ public class VideoGameCharacterService(AppDbContext context) : IVideoGameGameCha
     }
     
     public async Task<CharacterResponse> AddCharacterAsync(CreateCharacterRequest character)
-        => throw new NotImplementedException();
+    {
+        var newCharacter = new Character
+        {
+            Name = character.Name,
+            Game = character.Game,
+            Role = character.Role
+
+        };
+        var nc = context.Characters.Add(newCharacter);
+        await context.SaveChangesAsync();
+        return new CharacterResponse
+        {
+            Id = newCharacter.Id,
+            Name = newCharacter.Name,
+            Game = newCharacter.Game,
+            Role = newCharacter.Role
+        };
+    }
     
-    public async Task<CharacterResponse> UpdateCharacterAsync(int id, UpdateCharacterRequest character)
+    public async Task<bool> UpdateCharacterAsync(int id, UpdateCharacterRequest character)
         => throw new NotImplementedException();
     
     public async Task<bool> DeleteCharacterAsync(int id)
