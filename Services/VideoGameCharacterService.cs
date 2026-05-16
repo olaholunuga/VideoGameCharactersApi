@@ -59,7 +59,7 @@ public class VideoGameCharacterService(AppDbContext context) : IVideoGameGameCha
         };
     }
 
-    public async Task<bool> UpdateCharacterAsync(int id, UpdateCharacterRequest character)
+    public async Task<CharacterResponse?> UpdateCharacterAsync(int id, UpdateCharacterRequest character)
     {
         var charac = await context.Characters.FindAsync(id);
 
@@ -78,17 +78,24 @@ public class VideoGameCharacterService(AppDbContext context) : IVideoGameGameCha
                 charac.Role = character.Role;
             }
             await context.SaveChangesAsync();
-            return true;
+            return new CharacterResponse
+            {
+                Id = charac.Id,
+                Name = charac.Name,
+                Game = charac.Game,
+                Role = charac.Role
+            };
         }
-        return false;
+        return null;
     }
 
     public async Task<bool> DeleteCharacterAsync(int id)
     {
-        var chracterToDelete = await context.Characters.FindAsync(id);
-        if (chracterToDelete is null)
+        var characterToDelete = await context.Characters.FindAsync(id);
+        if (characterToDelete is null)
             return false;
-        
-        await context.Characters.Remove(characterToDelete)
+
+        context.Characters.Remove(characterToDelete);
+        return true;
     }
 }

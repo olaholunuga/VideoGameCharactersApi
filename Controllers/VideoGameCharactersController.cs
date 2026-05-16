@@ -32,10 +32,10 @@ public class VideoGameCharactersController(IVideoGameGameCharacterService servic
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateCharacter(int id, UpdateCharacterRequest character)
+    public async Task<ActionResult<CharacterResponse>> UpdateCharacter(int id, UpdateCharacterRequest character)
     {
         var updatedCharacter = await service.UpdateCharacterAsync(id, character);
-        return updatedCharacter ? NoContent() : NotFound("Character with the given ID not found");
+        return updatedCharacter is not null ? Ok(updatedCharacter) : NotFound("Character with the given ID not found");
     }
 
     [HttpDelete("{id}")]
