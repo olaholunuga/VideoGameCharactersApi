@@ -13,7 +13,7 @@ public class VideoGameCharacterService(AppDbContext context) : IVideoGameGameCha
         new Character { Id = 2, Name = "Link", Game = "Legend of Zelda", Role = "Hero"},
         new Character { Id = 3, Name = "Bowser", Game = "Super Mario Bros", Role = "Villian"},
         new Character { Id = 4, Name = "Zelda", Game = "Legend of Zelda", Role = "Princess"}
-    
+
     };
 
     public async Task<List<CharacterResponse>> GetAllCharactersAsync()
@@ -24,7 +24,7 @@ public class VideoGameCharacterService(AppDbContext context) : IVideoGameGameCha
             Game = c.Game,
             Role = c.Role
         }).ToListAsync();
-    
+
     public async Task<CharacterResponse?> GetCharacterByIdAsync(int id)
     {
         // var character = characters.FirstOrDefault(c => c.Id == id);
@@ -38,7 +38,7 @@ public class VideoGameCharacterService(AppDbContext context) : IVideoGameGameCha
             Role = c.Role
         }).FirstOrDefaultAsync();
     }
-    
+
     public async Task<CharacterResponse> AddCharacterAsync(CreateCharacterRequest character)
     {
         var newCharacter = new Character
@@ -58,10 +58,37 @@ public class VideoGameCharacterService(AppDbContext context) : IVideoGameGameCha
             Role = newCharacter.Role
         };
     }
-    
+
     public async Task<bool> UpdateCharacterAsync(int id, UpdateCharacterRequest character)
-        => throw new NotImplementedException();
-    
+    {
+        var charac = await context.Characters.FindAsync(id);
+
+        if (charac is not null)
+        {
+            if (character.Name is not null && character.Game != string.Empty)
+            {
+                charac.Name = character.Name;
+            }
+            if (character.Game is not null && character.Game != string.Empty)
+            {
+                charac.Game = character.Game;
+            }
+            if (character.Role is not null && character.Role != string.Empty)
+            {
+                charac.Role = character.Role;
+            }
+            await context.SaveChangesAsync();
+            return true;
+        }
+        return false;
+    }
+
     public async Task<bool> DeleteCharacterAsync(int id)
-        => throw new NotImplementedException();
+    {
+        var chracterToDelete = await context.Characters.FindAsync(id);
+        if (chracterToDelete is null)
+            return false;
+        
+        await context.Characters.Remove(characterToDelete)
+    }
 }
